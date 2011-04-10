@@ -26,8 +26,19 @@ Possible defines:
 }
 
 unit sofia_sip;
-
-{$mode objfpc}{$H+}
+{$IFDEF FPC}
+  {$mode fpc}      // no need for object oriented here
+  {$PACKRECORDS C} // make it competible with C ABI
+  {$MACRO ON}      // ALLOW DEFINE SYMBOLE := VALUE
+  {$IFDEF UNIX}
+    {$CALLING CDECL} // On Unix we use CDECL calling convention
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+    {$CALLING STDCALL} // On Windows we use STDCALL calling convention
+  {$ENDIF}
+{$ELSE}
+  Unsupported compiler
+{$ENDIF}
 
 interface
 
