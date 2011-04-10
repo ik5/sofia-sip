@@ -1,0 +1,8 @@
+src/lib/*backup/*
+src/lib/lib/*
+src/test/lib/*
+*.bak
+*~
+tmp/
+*.ppu
+*.o
