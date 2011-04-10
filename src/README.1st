@@ -1,0 +1,59 @@
+README
+======
+The following binding is for Nokia's Sofia-SIP library: http://sofia-sip.sourceforge.net/
+The library releases as LGPL, and so does the bindings.
+
+Binding Information:
+====================
+
+
+Starting point to understand Sofia's Modules:
+=============================================
+  * su      - The su module contains a simple, portable socket/timing/synchronizing
+              library developed for Sofia communications software.
+  * sresolv - The Sofia sresolv module consists of an asynchronous DNS resolver
+              with EDNS extensions.
+  * ipt     - Utility library for IP Telephony applications.
+  * nua     - The nua module contains the user-agent library taking care of basic
+              SIP User Agent functions. Its functionality includes call
+              management, messaging and event retrieval.
+  * nia     - Sofia Event API provides an interface to different events used in
+              SIP presence and conferencing. Used in both Server and Client.
+  * iptsec  - The iptsec module currently provides interfaces to HTTP Basic and
+              Digest authentication, used by HTTP and SIP protocol elements.
+              There are both client-side and server-side (authentication
+              verification) functionality available
+  * nta     - Sofia SIP Transaction API (nta) provides simple interface to the
+              SIP transaction, transport and message handling. The nta interface
+              is intended for both network and user elements.
+  * tport   - The tport module contains a generic transport interface used by
+              SIP, RTSP, and HTTP protocols. It is an abstraction layer between
+              a protocol stack and a transport protocol implementation.
+              The interface is implemented via transport objects.
+  * sip     - The Sofia sip module contains interface to the SIP parser and the
+              header and message objects.
+  * msg     - This module contains parser and functions for manipulating messages
+              and headers for text-based protocols like SIP, HTTP or RTSP.
+              It also provides parsing of MIME headers and MIME multipart
+              messages common to these protocols.
+  * url     - The Sofia url module contains macros and functions for using URL
+              datatype url_t, parsing and printing URLs.
+  * bnf     - The Sofia bnf module contains macros and functions for parsing
+              text-based formats, for example, for SIP.
+  * nth     - NTH provides interface to simple HTTP transaction engines for both
+              HTTP servers and clients.
+              The transaction interface for both client and server.
+  * http    - The http module contains interface to the HTTP parser and the
+              header and message objects.
+  * soa     - The Sofia SIP soa module consists of an asynchronous SDP Offer/Answer
+              engine library.
+  * sdp     - The sdp module provides a simple "C" parser interface for SDP
+              [RFC 2327], Session Description Protocol. The parser also implements
+              support for IPv6 addresses as per RFC 3266. The RFC 4566 should be
+              supported, but we have not checked since
+              draft-eitf-mmusic-sdp-new-17 or so.
+  * stun    - The Sofia stun module contains macros and functions for STUN
+              server and client library.
+
+
+
