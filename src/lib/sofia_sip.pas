@@ -19,10 +19,19 @@
 
 {
 
+To define symbol to FPC use the -d like so:
+  -dUSE_GLIB
+
+To undifne symbol to FPC use the -u like so:
+  -uUSE_WINSOCK2
+
 Possible defines:
-  - COMPAT_1_12_0 - Make code competible with 1.12.0
-  - USE_GLIB      - Link glib as well
-  - USE_WINSOCK2  - Link Winsock2 instead of the old winsock
+  - COMPAT_1_12_0   - Make code competible with 1.12.0
+  - USE_GLIB        - Link glib as well
+  - USE_WINSOCK2    - Link Winsock2 instead of the old winsock. defined by
+                      default.
+  - SU_HAVE_BSDSOCK - If the library was created with BSD sockets. defined by
+                      default for BSD/Linux.
 
 }
 
@@ -33,9 +42,13 @@ unit sofia_sip;
   {$MACRO ON}      // ALLOW DEFINE SYMBOLE := VALUE
   {$IFDEF UNIX}
     {$CALLING CDECL} // On Unix we use CDECL calling convention
+    {$IF defined(LINUX) or defined(BSD)}
+      {$DEFINE SU_HAVE_BSDSOCK}
+    {$ENDIF}
   {$ENDIF}
   {$IFDEF WINDOWS}
     {$CALLING STDCALL} // On Windows we use STDCALL calling convention
+    {$DEFINE USE_WINSOCK2}
   {$ENDIF}
 {$ELSE}
   Unsupported compiler

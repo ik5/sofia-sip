@@ -109,5 +109,26 @@ const
   EPROTO  = 20006;
 {$ENDIF}
 
+//////////////////////////////////////
+/////////////// su.h /////////////////
+//////////////////////////////////////
 
+{$IF defined(SU_HAVE_BSDSOCK)}
+const
+  (** Invalid socket descriptor, error from socket() or accept() *)
+  INVALID_SOCKET = -1;
+  (** Error from other socket calls *)
+  SOCKET_ERROR   = -1;
+  (** Return code for a successful call *)
+  su_success     = 0;
+  (** Return code for an unsuccessful call *)
+  su_failure     = -1;
 
+{$ENDIF}
+
+{$IFDEF WINDOWS}
+const
+  su_success   = 0;
+  su_failure   = culong($ffffffff);
+  MSG_NOSIGNAL = 0;
+{$ENDIF}
