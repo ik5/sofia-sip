@@ -54,10 +54,15 @@ const
   LIBSOFIAGLIB = 'libsofia-sip-ua-glib';
 {$ENDIF}
 
-{$IFDEF COMPAT_1_12_0}
 type
-  csize_t = cint;
+{$IFDEF COMPAT_1_12_0}
+  csize_t  = cint;
+{$ELSE}
 {$ENDIF}
+  cusize_t = cuint;
+  isize_t  = csize_t;
+  issize_t = csize_t;
+  usize_t  = cuint;
 
 {$include sui.inc}
 

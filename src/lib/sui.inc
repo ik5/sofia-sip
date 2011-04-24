@@ -49,29 +49,30 @@ const
 
 type
    pSU_S64_T      = pcint64;
-   SU_S64_T       = cint64;
+   SU_S64_T       = cint64;   // 64-bit signed integer
    pSU_U64_T      = pcuint64;
-   SU_U64_T       = cuint64;
+   SU_U64_T       = cuint64;  // 64-bit unsigned integer
    pSU_S32_T      = pcint32;
-   SU_S32_T       = cint32;
+   SU_S32_T       = cint32;   // 32-bit signed integer
    pSU_U32_T      = pcuint32;
-   SU_U32_T       = cuint32;
+   SU_U32_T       = cuint32;  // 32-bit unsigned integer
    pSU_S16_T      = pcint16;
-   SU_S16_T       = cint16;
+   SU_S16_T       = cint16;   // 16-bit signed integer
    pSU_U16_T      = pcuint16;
-   SU_U16_T       = cuint16;
+   SU_U16_T       = cuint16;  // 16-bit unsigned integer
    pSU_S8_T       = pcint8;
-   SU_S8_T        = cint8;
+   SU_S8_T        = cint8;    // 8-bit signed integer
    pSU_U8_T       = pcuint8;
-   SU_U8_T        = cuint8;
+   SU_U8_T        = cuint8;   // 8-bit unsigned integer
    pSU_LEAST64_T  = {$IFDEF CPU64}pclong{$ELSE}pclonglong{$ENDIF};
+                              // At least 64-bit integer
    SU_LEAST64_T   = {$IFDEF CPU64}clong{$ELSE}clonglong{$ENDIF};
    pSU_LEAST32_T  = pcint32;
-   SU_LEAST32_T   = cint32;
+   SU_LEAST32_T   = cint32;   // At least 32-bit intege
    pSU_LEAST16_T  = pcint16;
-   SU_LEAST16_T   = cint16;
+   SU_LEAST16_T   = cint16;   // At least 16-bit integer
    pSU_LEAST8_T   = pcint8;
-   SU_LEAST8_T    = cint8;
+   SU_LEAST8_T    = cint8;    // At least 8-bit integer
 
 (*
   It seems that Linux does not have intptr_t for Linux, and here it also
@@ -87,6 +88,13 @@ type
    pSU_INTPTR_T   = ^SU_INTPTR_T;
    SU_INTPTR_T    = PtrUInt;
 {$ENDIF}
+
+// POSIX type used for a count of bytes or an error indication.
+   SOFIA_SSIZE_T  = {$ifdef cpu64}cint64{$else}cint32{$endif};
+
+////////////////////////////////////////////
+//////////////// su_errno.h ////////////////
+////////////////////////////////////////////
 
 
 
