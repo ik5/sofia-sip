@@ -73,7 +73,20 @@ type
    pSU_LEAST8_T   = pcint8;
    SU_LEAST8_T    = cint8;
 
+(*
+  It seems that Linux does not have intptr_t for Linux, and here it also
+  needed in Windows ...
+*)
+{$IF defined(LINUX) or defined(WINDOWS)}
+// Integer type large enough to store pointers
 
+   pS_INTPTR_T    = ^S_INTPTR_T;
+   S_INTPTR_T     = PtrInt;
+
+// Unsigned integer type large enough to store pointers
+   pSU_INTPTR_T   = ^SU_INTPTR_T;
+   SU_INTPTR_T    = PtrUInt;
+{$ENDIF}
 
 
 
