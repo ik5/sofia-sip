@@ -74,20 +74,15 @@ type
    pSU_LEAST8_T   = pcint8;
    SU_LEAST8_T    = cint8;    // At least 8-bit integer
 
-(*
-  It seems that Linux does not have intptr_t for Linux, and here it also
-  needed in Windows ...
-*)
-{$IF defined(LINUX) or defined(WINDOWS)}
 // Integer type large enough to store pointers
 
    pS_INTPTR_T    = ^S_INTPTR_T;
    S_INTPTR_T     = PtrInt;
 
 // Unsigned integer type large enough to store pointers
+
    pSU_INTPTR_T   = ^SU_INTPTR_T;
    SU_INTPTR_T    = PtrUInt;
-{$ENDIF}
 
 // POSIX type used for a count of bytes or an error indication.
    SOFIA_SSIZE_T  = {$ifdef cpu64}cint64{$else}cint32{$endif};
@@ -96,11 +91,23 @@ type
 //////////////// su_errno.h ////////////////
 ////////////////////////////////////////////
 
+(** Return string describing su error code. *)
+function su_strerror(e : cint) : PChar;
+  external LIBSOFIA;
 
+(** The latest su error. *)
+function su_errno : cint;
+  external LIBSOFIA;
 
+(** Set the su error. *)
+function su_seterrno(aParam : cint) : cint;
+  external LIBSOFIA;
 
-
-
+{$IFDEF WINDOWS}
+const
+  EBADMSG = 20005;
+  EPROTO  = 20006;
+{$ENDIF}
 
 
 

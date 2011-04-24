@@ -22,6 +22,7 @@
 Possible defines:
   - COMPAT_1_12_0 - Make code competible with 1.12.0
   - USE_GLIB      - Link glib as well
+  - USE_WINSOCK2  - Link Winsock2 instead of the old winsock
 
 }
 
@@ -46,6 +47,11 @@ uses
   ctypes, OpenSSL
   {$IFDEF Unix}
   //, Unix, unixtype
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+    // Use winsock(2) for the constant, not sure that is really needed
+    // I might remove it in the feature.
+    {$IFDEF USE_WINSOCK2}winsock2{$ELSE}winsock{$ENDIF}
   {$ENDIF};
 
 const
