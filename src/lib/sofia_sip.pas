@@ -22,17 +22,19 @@
 To define symbol to FPC use the -d like so:
   -dUSE_GLIB
 
-To undifne symbol to FPC use the -u like so:
+To undefine symbol to FPC use the -u like so:
   -uUSE_WINSOCK2
 
 Possible defines:
-  - COMPAT_1_12_0   - Make code competible with 1.12.0
-  - USE_GLIB        - Link glib as well
-  - USE_WINSOCK2    - Link Winsock2 instead of the old winsock. defined by
-                      default.
-  - SU_HAVE_BSDSOCK - If the library was created with BSD sockets. defined by
-                      default for BSD/Linux.
-
+  - COMPAT_1_12_0            - Make code competible with 1.12.0
+  - USE_GLIB                 - Link glib as well
+  - USE_WINSOCK2             - Link Winsock2 instead of the old winsock.
+                               defined by default.
+  - SU_HAVE_BSDSOCK          - If the library was created with BSD sockets.
+                               defined by default for BSD/Linux.
+  - SU_HAVE_SOCKADDR_STORAGE - sockaddr_storage exists - default not defined
+  - SU_HAVE_SOCKADDR_SA_LEN  - default not define
+  - SU_HAVE_IN6              - support ipv6. default not defined.
 }
 
 unit sofia_sip;
@@ -62,8 +64,7 @@ uses
   //, Unix, unixtype
   {$ENDIF}
   {$IFDEF WINDOWS}
-    // Use winsock(2) for the constant, not sure that is really needed
-    // I might remove it in the feature.
+    // Use winsock(2) for the constant <- it is needed for types
     {$IFDEF USE_WINSOCK2}winsock2{$ELSE}winsock{$ENDIF}
   {$ENDIF};
 

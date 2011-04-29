@@ -132,3 +132,96 @@ const
   su_failure   = culong($ffffffff);
   MSG_NOSIGNAL = 0;
 {$ENDIF}
+
+const
+  (**@HI Maximum size of host name. *)
+  SU_MAXHOST  = 1025;
+  (**@HI Maximum size of service name. *)
+  SU_MAXSERV  = 25;
+  (**@HI Maximum size of address in text format. *)
+  SU_ADDRSIZE = 48;
+  (**@HI Maximum size of port number in text format. *)
+  SU_SERVSIZE = 16;
+
+{$IF defined(SU_HAVE_BSDSOCK)}
+type
+   su_socket_t = cint;
+{$ENDIF}
+{$IFDEF WINDOWS}
+type
+   su_socket_t = TSocket;
+{$ENDIF}
+
+{$IFNDEF SU_HAVE_SOCKADDR_STORAGE}
+(*
+ * RFC 2553: protocol-independent placeholder for socket addresses
+ *)
+const
+  _SS_MAXSIZE   = 128;
+  _SS_ALIGNSIZE = sizeof(cint64);
+  _SS_PAD1SIZE  = (_SS_ALIGNSIZE - sizeof(cchar) * 2);
+  _SS_PAD2SIZE  = (_SS_MAXSIZE - sizeof(cchar) * 2 -
+                   _SS_PAD1SIZE - _SS_ALIGNSIZE);
+
+type
+   Psockaddr_storage = ^sockaddr_storage;
+   sockaddr_storage  = record
+{$IFDEF SU_HAVE_SOCKADDR_SA_LEN}
+                         ss_len     : cuchar;  // address length
+	                       ss_family  : cuchar;  // address family
+{$ELSE}
+                         ss_family  : cushort; // address family
+{$ENDIF}
+                         __ss_pad1  : array [0.._SS_PAD1SIZE] of cchar;
+	                       __ss_align : cint64;  // force desired structure
+                                               // storage alignment
+	                       __ss_pad2  : array [0.._SS_PAD2SIZE] of cchar;
+                       end;
+   Tsockaddr_storage = sockaddr_storage;
+{$ENDIF}
+
+type
+  (** Common socket address structure. *)
+  Psu_sockaddr_u = ^su_sockaddr_u;
+  su_sockaddr_u  = record
+                     case longint of
+                       0 : (su_dummy : cshort); //< Dummy member to initialize
+{$IFDEF SU_HAVE_SOCKADDR_SA_LEN}
+                       1 : (
+{$ELSE}
+
+{$END}
+                     end;
+                   end;
+  Tsu_sockaddr_u = su_sockaddr_u;
+
+union su_sockaddr_u {
+#ifdef DOCUMENTATION_ONLY
+  uint8_t             su_len;         /**< Length of structure */
+  uint8_t             su_family;      /**< Address family. */
+  uint16_t            su_port;        /**< Port number. */
+#else
+  short               su_dummy;	      /**< Dummy member to initialize */
+#if SU_HAVE_SOCKADDR_SA_LEN
+#define               su_len          su_sa.sa_len
+#else
+#define               su_len          su_array[0]
+#endif
+#define               su_family       su_sa.sa_family
+#define               su_port         su_sin.sin_port
+#endif
+
+  char                su_array[32];   /**< Presented as chars */
+  uint16_t            su_array16[16]; /**< Presented as 16-bit ints */
+  uint32_t            su_array32[8];  /**< Presented as 32-bit ints */
+  struct sockaddr     su_sa;          /**< Address in struct sockaddr format */
+  struct sockaddr_in  su_sin;         /**< Address in IPv4 format */
+#if SU_HAVE_IN6
+  struct sockaddr_in6 su_sin6;        /**< Address in IPv6 format */
+#endif
+#ifdef DOCUMENTATION_ONLY
+  uint32_t            su_scope_id;    /**< Scope ID. */
+#else
+#define               su_scope_id     su_array32[6]
+#endif
+};
