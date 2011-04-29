@@ -185,12 +185,13 @@ type
   Psu_sockaddr_u = ^su_sockaddr_u;
   su_sockaddr_u  = record
                      case longint of
-                       0 : (su_dummy : cshort); //< Dummy member to initialize
+                       0 : (su_dummy : cshort; //< Dummy member to initialize
 {$IFDEF SU_HAVE_SOCKADDR_SA_LEN}
-                       1 : (
+
 {$ELSE}
 
 {$END}
+                           );
                      end;
                    end;
   Tsu_sockaddr_u = su_sockaddr_u;
