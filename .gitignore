@@ -1,6 +1,7 @@
 src/lib/*backup/*
 src/lib/lib/*
 src/test/lib/*
+src/test/bind_test
 *.bak
 *~
 tmp/
