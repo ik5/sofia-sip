@@ -63,11 +63,11 @@ interface
 
 uses
   ctypes, OpenSSL
-  {$IFDEF Unix}
+  {$IFDEF Unix} // for types such as sockets ...
    , Unix, unixtype, Sockets
   {$ENDIF}
   {$IFDEF WINDOWS}
-    // Use winsock(2) for the constant <- it is needed for types
+    // Use winsock(2) for types
     {$IFDEF USE_WINSOCK2}winsock2{$ELSE}winsock{$ENDIF}
     {$IFNDEF USE_WINSOCK2}
       {$UNDIFINE SU_HAVE_IN6} // winsock 1 does not support IPv6
@@ -89,6 +89,9 @@ type
   isize_t  = csize_t;
   issize_t = csize_t;
   usize_t  = cuint;
+
+const
+  ULONG_MAX = MaxUIntValue;
 
 {$include sui.inc}
 

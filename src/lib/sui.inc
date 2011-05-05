@@ -208,4 +208,141 @@ type
   Tsu_sockaddr_u = su_sockaddr_u;
   su_sockaddr_t  = su_sockaddr_u;
 
+{$IFDEF SU_HAVE_BSDSOCK}
+type
+  (**Type of @a siv_len field in #su_iovec_t.
+   *
+   * The @a siv_len field in #su_iovec_t has different types in with POSIX
+   * (size_t) and WINSOCK2 (u_long). Truncate the iovec element size to
+   * #SU_IOVECLEN_MAX, if needed, and cast using #su_ioveclen_t.
+   *
+   * @sa #su_iovec_t, #SU_IOVECLEN_MAX
+   *
+   * @since New in @VERSION_1_12_2.
+   *)
+  su_ioveclen_t = csize_t;
 
+  (** I/O vector for scatter-gather I/O.
+   *
+   * This is the I/O vector element used with su_vsend() and su_vrecv(). It is
+   * defined like struct iovec with POSIX sockets:
+   * @code
+   * struct iovec {
+   *    void *iov_base;	// Pointer to data.
+   *    size_t iov_len;	// Length of data.
+   * };
+   * @endcode
+   *
+   * When using WINSOCK sockets it is defined as
+   * <a href="http://msdn.microsoft.com/library/en-us/winsock/winsock/wsabuf_2.asp">
+   * WSABUF</a>:
+   * @code
+   * typedef struct __WSABUF {
+   *   u_long len;
+   *   char FAR* buf;
+   * } WSABUF, *LPWSABUF;
+   * @endcode
+   *
+   * @note Ordering of the fields is reversed on Windows. Do not initialize
+   * this structure with static initializer, but assign both fields
+   * separately. Note that the type of the siv_len is #su_ioveclen_t which is
+   * defined as u_long on Windows and size_t on POSIX.
+   *
+   * For historical reasons, the structure is known as #msg_iovec_t in @msg
+   * module.
+   *
+   * @sa #su_ioveclen_t, SU_IOVECLEN_MAX, su_vsend(), su_vrecv(),
+   * #msg_iovec_t, msg_iovec(), msg_recv_iovec(),
+   * @c struct @c iovec defined in <sys/uio.h>, writev(2), readv(2),
+   * sendmsg(), recvmsg(),
+   * <a href="http://msdn.microsoft.com/library/en-us/winsock/winsock/wsabuf_2.asp">
+   * WSABUF of WinSock2</a>
+   *)
+  Psu_iovec_s = ^su_iovec_s;
+  Psu_iovec_t = ^su_iovec_s;
+  su_iovec_s  = record
+                  siv_base : Pointer;       // Pointer to buffer.
+                  siv_len  : su_ioveclen_t; // Size of buffer.
+                end;
+  su_iovec_t  = su_iovec_s;
+
+  (** Maximum size of buffer in a single su_iovec_t element.
+   * @sa #su_ioveclen_t, #su_iovec_t
+   *
+   * @since New in @VERSION_1_12_2.
+   * @HIDE
+   *)
+const
+  SU_IOVECLEN_MAX = INT_MAX;
+{$ENDIF}
+
+{$IFDEF WINDOWS}
+type
+ su_ioveclen_t = clong;
+
+ // This is same as WSABUF
+ Psu_iovec_s = ^su_iovec_s;
+ Psu_iovec_t = ^su_iovec_s;
+ su_iovec_s  = record
+                 siv_len  : su_ioveclen_t;
+                 siv_base : Pointer;
+               end;
+ su_iovec_t  = su_iovec_s;
+
+const
+  SU_IOVECLEN_MAX = ULONG_MAX;
+{$ENDIF}
+
+(* ----------------------------------------------------------------------
+ Socket compatibility functions *)
+
+function su_init : cint;
+  external LIBSOFIA;
+procedure su_deinit;
+  external LIBSOFIA;
+
+(** Create an endpoint for communication. *)
+function su_socket(af, sock, proto : cint) : su_socket_t;
+  external LIBSOFIA;
+(** Close an socket descriptor. *)
+function su_close(s : su_socket_t) : cint;
+  external LIBSOFIA;
+(** Control socket. *)
+function su_ioctl(s       : su_socket_t;
+                  request : cint;
+                  params  : array of const) : cint;
+  external LIBSOFIA;
+
+/**Check for in-progress error codes.
+ *
+ * Checks if the @a errcode indicates that the socket call failed because
+ * it would have blocked.
+ *
+ * Defined as macro with POSIX sockets.
+ *
+ * @since New in @VERSION_1_12_2.
+ */
+SOFIAPUBFUN int su_is_blocking(int errcode);
+
+/** Set/reset blocking option. */
+SOFIAPUBFUN int su_setblocking(su_socket_t s, int blocking);
+/** Set/reset address reusing option. */
+SOFIAPUBFUN int su_setreuseaddr(su_socket_t s, int reuse);
+/** Get the error code associated with the socket. */
+SOFIAPUBFUN int su_soerror(su_socket_t s);
+/** Get the socket type. */
+SOFIAPUBFUN int su_getsocktype(su_socket_t s);
+
+/** Get size of message available in socket. */
+SOFIAPUBFUN issize_t su_getmsgsize(su_socket_t s);
+
+/** Scatter-gather send. */
+SOFIAPUBFUN
+issize_t su_vsend(su_socket_t, su_iovec_t const iov[], isize_t len, int flags,
+		  su_sockaddr_t const *su, socklen_t sulen);
+/** Scatter-gather receive. */
+SOFIAPUBFUN
+issize_t su_vrecv(su_socket_t, su_iovec_t iov[], isize_t len, int flags,
+		  su_sockaddr_t *su, socklen_t *sulen);
+/** Return local IP address */
+SOFIAPUBFUN int su_getlocalip(su_sockaddr_t *sin);
