@@ -62,11 +62,12 @@ unit sofia_sip;
 interface
 
 uses
-  ctypes, OpenSSL
+  OpenSSL
   {$IFDEF Unix} // for types such as sockets ...
-   , Unix, unixtype, Sockets
+   , BaseUnix, Unix, unixtype, Sockets
   {$ENDIF}
   {$IFDEF WINDOWS}
+    ctypes,
     // Use winsock(2) for types
     {$IFDEF USE_WINSOCK2}winsock2{$ELSE}winsock{$ENDIF}
     {$IFNDEF USE_WINSOCK2}
@@ -98,6 +99,8 @@ const
 
 
 implementation
+
+{$include suim.inc}
 
 end.
 

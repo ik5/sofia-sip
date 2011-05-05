@@ -311,10 +311,12 @@ function su_socket(af, sock, proto : cint) : su_socket_t;
 function su_close(s : su_socket_t) : cint;
   external LIBSOFIA;
 (** Control socket. *)
+{$IFDEF WINDOWS}
 function su_ioctl(s       : su_socket_t;
                   request : cint;
                   params  : array of const) : cint;
   external LIBSOFIA;
+
 
 (**Check for in-progress error codes.
  *
@@ -327,6 +329,7 @@ function su_ioctl(s       : su_socket_t;
  *)
 function su_is_blocking(errcode : cint) : cint;
   external LIBSOFIA;
+{$ENDIF}
 
 (** Set/reset blocking option. *)
 function su_setblocking(s : su_socket_t; blocking : cint) : cint;
@@ -347,7 +350,7 @@ function su_getmsgsize(s : su_socket_t) : issize_t;
 
 (** Scatter-gather send. *)
 function su_vsend(s     : su_socket_t;
-                  iov   : arr_su_iovec_t;
+                  iov   : Psu_iovec_t;
                   len   : isize_t;
                   flags : isize_t;
                   su    : Psu_sockaddr_t;
@@ -356,7 +359,7 @@ function su_vsend(s     : su_socket_t;
 
 (** Scatter-gather receive. *)
 function su_vrecv(s     : su_socket_t;
-                  iov   : arr_su_iovec_t;
+                  iov   : Psu_iovec_t;
                   len   : issize_t;
                   flags : cint;
                   su    : Psu_sockaddr_t;
@@ -367,4 +370,11 @@ function su_vrecv(s     : su_socket_t;
 function su_getlocalip(sin : Psu_sockaddr_t) : cint;
   external LIBSOFIA;
 
+{$IFDEF SU_HAVE_BSDSOCK}
+//int su_ioctl(su_socket_t s, int request, ...);
+function su_ioctl(s : su_socket_t; request : cint; params  : array of const) : cint;
+ external 'libc' name 'ioctl';
 
+function su_is_blocking(errcode : cint) : cint;
+
+{$ENDIF}
