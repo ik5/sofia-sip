@@ -41,7 +41,7 @@ Possible defines:
 
 unit sofia_sip;
 {$IFDEF FPC}
-  {$mode fpc}           // no need for object oriented here
+  {$mode objfpc}        // we need it for "array of const" support ...
   {$PACKRECORDS C}      // make it competible with C ABI
   {$MACRO ON}           // ALLOW DEFINE SYMBOLE := VALUE
   {$DEFINE SU_HAVE_IN6} // support ipv6
