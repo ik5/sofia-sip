@@ -2,7 +2,7 @@ src/lib/*backup/*
 src/lib/lib/*
 src/test/lib/*
 src/test/bind_test
-*.lpi
+src/test/bind_test.lpi
 *.bak
 *~
 tmp/
