@@ -293,6 +293,9 @@ const
   SU_IOVECLEN_MAX = ULONG_MAX;
 {$ENDIF}
 
+type
+ arr_su_iovec_t = array of su_iovec_t;
+
 (* ----------------------------------------------------------------------
  Socket compatibility functions *)
 
@@ -313,7 +316,7 @@ function su_ioctl(s       : su_socket_t;
                   params  : array of const) : cint;
   external LIBSOFIA;
 
-/**Check for in-progress error codes.
+(**Check for in-progress error codes.
  *
  * Checks if the @a errcode indicates that the socket call failed because
  * it would have blocked.
@@ -321,28 +324,47 @@ function su_ioctl(s       : su_socket_t;
  * Defined as macro with POSIX sockets.
  *
  * @since New in @VERSION_1_12_2.
- */
-SOFIAPUBFUN int su_is_blocking(int errcode);
+ *)
+function su_is_blocking(errcode : cint) : cint;
+  external LIBSOFIA;
 
-/** Set/reset blocking option. */
-SOFIAPUBFUN int su_setblocking(su_socket_t s, int blocking);
-/** Set/reset address reusing option. */
-SOFIAPUBFUN int su_setreuseaddr(su_socket_t s, int reuse);
-/** Get the error code associated with the socket. */
-SOFIAPUBFUN int su_soerror(su_socket_t s);
-/** Get the socket type. */
-SOFIAPUBFUN int su_getsocktype(su_socket_t s);
+(** Set/reset blocking option. *)
+function su_setblocking(s : su_socket_t; blocking : cint) : cint;
+  external LIBSOFIA;
+(** Set/reset address reusing option. *)
+function su_setreuseaddr(s : su_socket_t; resue : cint) : cint;
+  external LIBSOFIA;
+(** Get the error code associated with the socket. *)
+function su_soerror(s : su_socket_t) : cint;
+  external LIBSOFIA;
+(** Get the socket type. *)
+function su_getsocktype(s : su_socket_t) : cint;
+  external LIBSOFIA;
 
-/** Get size of message available in socket. */
-SOFIAPUBFUN issize_t su_getmsgsize(su_socket_t s);
+(** Get size of message available in socket. *)
+function su_getmsgsize(s : su_socket_t) : issize_t;
+  external LIBSOFIA;
 
-/** Scatter-gather send. */
-SOFIAPUBFUN
-issize_t su_vsend(su_socket_t, su_iovec_t const iov[], isize_t len, int flags,
-		  su_sockaddr_t const *su, socklen_t sulen);
-/** Scatter-gather receive. */
-SOFIAPUBFUN
-issize_t su_vrecv(su_socket_t, su_iovec_t iov[], isize_t len, int flags,
-		  su_sockaddr_t *su, socklen_t *sulen);
-/** Return local IP address */
-SOFIAPUBFUN int su_getlocalip(su_sockaddr_t *sin);
+(** Scatter-gather send. *)
+function su_vsend(s     : su_socket_t;
+                  iov   : arr_su_iovec_t;
+                  len   : isize_t;
+                  flags : isize_t;
+                  su    : Psu_sockaddr_t;
+                  sulen : socklen_t)        : issize_t;
+  external LIBSOFIA;
+
+(** Scatter-gather receive. *)
+function su_vrecv(s     : su_socket_t;
+                  iov   : arr_su_iovec_t;
+                  len   : issize_t;
+                  flags : cint;
+                  su    : Psu_sockaddr_t;
+                  sulen : psocklen_t)       : issize_t;
+  external LIBSOFIA;
+
+(** Return local IP address *)
+function su_getlocalip(sin : Psu_sockaddr_t) : cint;
+  external LIBSOFIA;
+
+

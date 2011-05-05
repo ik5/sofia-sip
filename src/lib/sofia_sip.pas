@@ -82,13 +82,14 @@ const
 
 type
 {$IFDEF COMPAT_1_12_0}
-  csize_t  = cint;
+  csize_t    = cint;
 {$ELSE}
 {$ENDIF}
-  cusize_t = cuint;
-  isize_t  = csize_t;
-  issize_t = csize_t;
-  usize_t  = cuint;
+  cusize_t   = cuint;
+  isize_t    = csize_t;
+  issize_t   = csize_t;
+  usize_t    = cuint;
+  psocklen_t = ^socklen_t;
 
 const
   ULONG_MAX = MaxUIntValue;
