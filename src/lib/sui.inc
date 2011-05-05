@@ -180,49 +180,32 @@ type
    Tsockaddr_storage = sockaddr_storage;
 {$ENDIF}
 
+{$IFDEF SU_HAVE_SOCKADDR_SA_LEN}
+// #define               su_len          su_sa.sa_len <- unsupported for now
+{$ELSE}
+// #define               su_len          su_array[0] <- unsupported for now
+{$ENDIF}
+// #define               su_family       su_sa.sa_family <- unsupported for now
+// #define               su_port         su_sin.sin_port <- unsupported for now
+// #define               su_scope_id     su_array32[6] <- unsupported for now
+
 type
   (** Common socket address structure. *)
   Psu_sockaddr_u = ^su_sockaddr_u;
+  Psu_sockaddr_t = ^su_sockaddr_u;
   su_sockaddr_u  = record
-                     case longint of
-                       0 : (su_dummy : cshort; //< Dummy member to initialize
-{$IFDEF SU_HAVE_SOCKADDR_SA_LEN}
-
-{$ELSE}
-
-{$END}
-                           );
-                     end;
+                     case Byte of
+                       0 : (su_dummy   : cshort);                  //< Dummy member to initialize
+                       1 : (su_array   : array[0..31] of char);    // Presented as chars
+                       2 : (su_array16 : array[0..15] of cuint16); // Presented as 16-bit ints
+                       3 : (su_array32 : array[0..8]  of cuint32); // Presented as 32-bit ints
+                       4 : (su_sa      : sockaddr);                // Address in struct sockaddr format
+                       5 : (su_sin     : sockaddr_in);             // Address in IPv4 format
+{$IFDEF SU_HAVE_IN6}
+                       6 : (su_sin6    : sockaddr_in6);            // Address in IPv6 format
+{$ENDIF}
                    end;
   Tsu_sockaddr_u = su_sockaddr_u;
+  su_sockaddr_t  = su_sockaddr_u;
 
-union su_sockaddr_u {
-#ifdef DOCUMENTATION_ONLY
-  uint8_t             su_len;         /**< Length of structure */
-  uint8_t             su_family;      /**< Address family. */
-  uint16_t            su_port;        /**< Port number. */
-#else
-  short               su_dummy;	      /**< Dummy member to initialize */
-#if SU_HAVE_SOCKADDR_SA_LEN
-#define               su_len          su_sa.sa_len
-#else
-#define               su_len          su_array[0]
-#endif
-#define               su_family       su_sa.sa_family
-#define               su_port         su_sin.sin_port
-#endif
 
-  char                su_array[32];   /**< Presented as chars */
-  uint16_t            su_array16[16]; /**< Presented as 16-bit ints */
-  uint32_t            su_array32[8];  /**< Presented as 32-bit ints */
-  struct sockaddr     su_sa;          /**< Address in struct sockaddr format */
-  struct sockaddr_in  su_sin;         /**< Address in IPv4 format */
-#if SU_HAVE_IN6
-  struct sockaddr_in6 su_sin6;        /**< Address in IPv6 format */
-#endif
-#ifdef DOCUMENTATION_ONLY
-  uint32_t            su_scope_id;    /**< Scope ID. */
-#else
-#define               su_scope_id     su_array32[6]
-#endif
-};

@@ -34,14 +34,17 @@ Possible defines:
                                defined by default for BSD/Linux.
   - SU_HAVE_SOCKADDR_STORAGE - sockaddr_storage exists - default not defined
   - SU_HAVE_SOCKADDR_SA_LEN  - default not define
-  - SU_HAVE_IN6              - support ipv6. default not defined.
+  - SU_HAVE_IN6              - support ipv6. defined by default.
+                               removed for winsoc 1 that does not have IPv6
+                               support.
 }
 
 unit sofia_sip;
 {$IFDEF FPC}
-  {$mode fpc}      // no need for object oriented here
-  {$PACKRECORDS C} // make it competible with C ABI
-  {$MACRO ON}      // ALLOW DEFINE SYMBOLE := VALUE
+  {$mode fpc}           // no need for object oriented here
+  {$PACKRECORDS C}      // make it competible with C ABI
+  {$MACRO ON}           // ALLOW DEFINE SYMBOLE := VALUE
+  {$DEFINE SU_HAVE_IN6} // support ipv6
   {$IFDEF UNIX}
     {$CALLING CDECL} // On Unix we use CDECL calling convention
     {$IF defined(LINUX) or defined(BSD)}
@@ -61,11 +64,14 @@ interface
 uses
   ctypes, OpenSSL
   {$IFDEF Unix}
-  //, Unix, unixtype
+   , Unix, unixtype, Sockets
   {$ENDIF}
   {$IFDEF WINDOWS}
     // Use winsock(2) for the constant <- it is needed for types
     {$IFDEF USE_WINSOCK2}winsock2{$ELSE}winsock{$ENDIF}
+    {$IFNDEF USE_WINSOCK2}
+      {$UNDIFINE SU_HAVE_IN6} // winsock 1 does not support IPv6
+    {$ENDIF}
   {$ENDIF};
 
 const
